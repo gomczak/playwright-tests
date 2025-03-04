@@ -22,6 +22,7 @@ jobs:
         path: "test-app"
     - name: Create .env file
       run: |
+        cd test-app
         touch .env
         echo "${{secrets.ENV_SECRETS}}" >> .env
     - name: Test printing your secret (Remove later!)
