@@ -10,10 +10,19 @@ jobs:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout repository with playwright tests
+      uses: actions/checkout@v4
     - uses: actions/setup-node@v4
       with:
         node-version: lts/*
+    - name: Checkout external repository with test-app project
+      uses: actions/checkout@v4
+      with:
+        repository: "gomczak/test-app"
+        path: "test-app"
+    - name: Run docker compose
+      run: |
+        docker-compose up --build
     - name: Install dependencies
       run: npm install -g pnpm && pnpm install
     - name: Install Playwright Browsers
