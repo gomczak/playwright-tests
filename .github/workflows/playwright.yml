@@ -21,6 +21,9 @@ jobs:
         repository: "gomczak/test-app"
         path: "test-app"
     - name: Run docker compose
+      env:
+        MONGODB_URI: ${{secrets.MONGODB_URI}}
+        PORT: 3000
       run: |
         cd test-app
         docker compose up --build
