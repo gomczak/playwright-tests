@@ -22,6 +22,7 @@ jobs:
         path: "test-app"
     - name: Run docker compose
       run: |
+        cd test-app
         docker-compose up --build
     - name: Install dependencies
       run: npm install -g pnpm && pnpm install
