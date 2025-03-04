@@ -20,11 +20,14 @@ jobs:
       with:
         repository: "gomczak/test-app"
         path: "test-app"
-        ref: update-docker-compose
+    - name: Create .env file
+      run: |
+        touch .env
+        echo "${{secrets.ENV_SECRETS}}" >> .env
+    - name: Test printing your secret (Remove later!)
+      run: |
+        cat .env
     - name: Run docker compose
-      env:
-        MONGODB_URI: ${{secrets.MONGODB_URI}}
-        PORT: 3000
       run: |
         cd test-app
         docker compose up --build
