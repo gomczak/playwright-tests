@@ -27,6 +27,7 @@ jobs:
         echo "${{secrets.ENV_SECRETS}}" >> .env
     - name: Test printing your secret (Remove later!)
       run: |
+        cd test-app
         cat .env
     - name: Run docker compose
       run: |
