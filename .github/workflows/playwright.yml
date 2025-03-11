@@ -12,34 +12,50 @@ jobs:
 
     env:
       TEST_APP_PATH: test-app
+      NODE_VERSION: lts/*
 
     steps:
     - name: Checkout repository with playwright tests
       uses: actions/checkout@v4
+    
     - uses: actions/setup-node@v4
       with:
-        node-version: lts/*
+        node-version: ${{ env.NODE_VERSION }}
+    
     - name: Checkout external repository with test-app project
       uses: actions/checkout@v4
       with:
         repository: "gomczak/test-app"
         path: ${{ env.TEST_APP_PATH }}
+
     - name: Create .env file for test app
       working-directory: ${{ env.TEST_APP_PATH }}
       run: |
         touch .env
         echo "${{secrets.ENV_SECRETS}}" >> .env
+
     - name: Run docker compose
       working-directory: ${{ env.TEST_APP_PATH }}
       run: |
         docker compose up --build -d
+    
+    - name: Cache pnpm dependencies
+      uses: actions/cache@v4
+      with:
+        path: ~/.pnpm-store
+        key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+
     - name: Install dependencies
       run: npm install -g pnpm && pnpm install
+
     - name: Install Playwright Browsers
       run: pnpm exec playwright install --with-deps
+
     - name: Run Playwright tests
       run: pnpm exec playwright test
-    - uses: actions/upload-artifact@v4
+      
+    - name: Upload Playwright test report
+      uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
         name: playwright-report
