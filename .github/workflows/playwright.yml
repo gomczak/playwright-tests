@@ -41,14 +41,16 @@ jobs:
     
     - name: Cache pnpm dependencies
       uses: actions/cache@v4
+      id: playwright-cache
       with:
-        path: "~/.pnpm-store"
+        path: ~/.pnpm-store
         key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
 
     - name: Install dependencies
       run: npm install -g pnpm && pnpm install
 
     - name: Install Playwright Browsers
+      if: steps.playwright-cache.outputs.cache-hit != 'true'
       run: pnpm exec playwright install --with-deps
 
     - name: Run Playwright tests
