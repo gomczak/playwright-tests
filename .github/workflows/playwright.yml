@@ -22,22 +22,22 @@ jobs:
       with:
         node-version: ${{ env.NODE_VERSION }}
     
-    - name: Checkout external repository with test-app project
-      uses: actions/checkout@v4
-      with:
-        repository: "gomczak/test-app"
-        path: ${{ env.TEST_APP_PATH }}
+    # - name: Checkout external repository with test-app project
+    #   uses: actions/checkout@v4
+    #   with:
+    #     repository: "gomczak/test-app"
+    #     path: ${{ env.TEST_APP_PATH }}
 
-    - name: Create .env file for test app
-      working-directory: ${{ env.TEST_APP_PATH }}
-      run: |
-        touch .env
-        echo "${{secrets.ENV_SECRETS}}" >> .env
+    # - name: Create .env file for test app
+    #   working-directory: ${{ env.TEST_APP_PATH }}
+    #   run: |
+    #     touch .env
+    #     echo "${{secrets.ENV_SECRETS}}" >> .env
 
-    - name: Run docker compose
-      working-directory: ${{ env.TEST_APP_PATH }}
-      run: |
-        docker compose up --build -d
+    # - name: Run docker compose
+    #   working-directory: ${{ env.TEST_APP_PATH }}
+    #   run: |
+    #     docker compose up --build -d
     
     - name: Cache pnpm dependencies
       uses: actions/cache@v4
