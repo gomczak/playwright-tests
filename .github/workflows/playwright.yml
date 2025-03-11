@@ -40,7 +40,7 @@ jobs:
     #     docker compose up --build -d
     
     - name: Cache pnpm dependencies
-      uses: actions/cache@v4
+      uses: actions/cache@v3
       id: playwright-cache
       with:
         path: ~/.pnpm-store
