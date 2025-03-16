@@ -39,11 +39,11 @@ jobs:
     #   run: |
     #     docker compose up --build -d
     
-    - name: Cache pnpm dependencies
-      uses: actions/cache@v3
+    - name: Cache playwright binaries
+      uses: actions/cache@v4
       id: playwright-cache
       with:
-        path: ~/.pnpm-store
+        path: ~/.cache/ms-playwright
         key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
 
     - name: Install dependencies
