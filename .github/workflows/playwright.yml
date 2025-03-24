@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       files:
-        description: 'Put path to folders or names of files'
+        description: 'Put path to folders or names of files separated by space'
         type: string
       e2e:
         type: boolean
@@ -60,8 +60,15 @@ jobs:
 
     - name: Run Playwright tests
       run: |
-        echo "Running selected folders or files: ${{ github.event.inputs.files }} ${{ github.event.inputs.folders }}"
-        pnpm exec playwright test ${{ github.event.inputs.files }}
+        selected_options=()
+        if [[ "${{ github.event.inputs.e2e }}" == "true" ]]; then
+          selected_options+=("/e2e")
+        fi
+        if [[ "${{ github.event.inputs.tests_examples }}" == "true" ]]; then
+          selected_options+=("/test-examples")
+        fi
+        echo "Selected options: ${selected_options[@]} ${{ github.event.inputs.files }}"
+        pnpm exec playwright test ${selected_options[@]} ${{ github.event.inputs.files }}
       
     - name: Upload Playwright test report
       uses: actions/upload-artifact@v4
