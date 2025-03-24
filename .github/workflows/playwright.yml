@@ -22,35 +22,27 @@ jobs:
       with:
         node-version: ${{ env.NODE_VERSION }}
     
-    # - name: Checkout external repository with test-app project
-    #   uses: actions/checkout@v4
-    #   with:
-    #     repository: "gomczak/test-app"
-    #     path: ${{ env.TEST_APP_PATH }}
-
-    # - name: Create .env file for test app
-    #   working-directory: ${{ env.TEST_APP_PATH }}
-    #   run: |
-    #     touch .env
-    #     echo "${{secrets.ENV_SECRETS}}" >> .env
-
-    # - name: Run docker compose
-    #   working-directory: ${{ env.TEST_APP_PATH }}
-    #   run: |
-    #     docker compose up --build -d
-    
-    - name: Cache playwright binaries
-      uses: actions/cache@v4
-      id: playwright-cache
+    - name: Checkout external repository with test-app project
+      uses: actions/checkout@v4
       with:
-        path: ~/.cache/ms-playwright
-        key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+        repository: "gomczak/test-app"
+        path: ${{ env.TEST_APP_PATH }}
+
+    - name: Create .env file for test app
+      working-directory: ${{ env.TEST_APP_PATH }}
+      run: |
+        touch .env
+        echo "${{secrets.ENV_SECRETS}}" >> .env
+
+    - name: Run docker compose
+      working-directory: ${{ env.TEST_APP_PATH }}
+      run: |
+        docker compose up --build -d
 
     - name: Install dependencies
       run: npm install -g pnpm && pnpm install
 
     - name: Install Playwright Browsers
-      if: steps.playwright-cache.outputs.cache-hit != 'true'
       run: pnpm exec playwright install --with-deps
 
     - name: Run Playwright tests
