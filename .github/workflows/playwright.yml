@@ -5,6 +5,10 @@ on:
   pull_request:
     branches: [ main, master ]
   workflow_dispatch:
+    inputs:
+      files:
+        description: 'Put path to folders or names of files'
+
 jobs:
   test:
     timeout-minutes: 60
@@ -46,7 +50,9 @@ jobs:
       run: pnpm exec playwright install --with-deps
 
     - name: Run Playwright tests
-      run: pnpm exec playwright test
+      run: |
+        echo "Running selected folders or files: ${{ github.event.inputs.files }}"
+        pnpm exec playwright test ${{ github.event.inputs.files }}
       
     - name: Upload Playwright test report
       uses: actions/upload-artifact@v4
