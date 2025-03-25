@@ -26,8 +26,8 @@ export default defineConfig({
     [
       "allure-playwright",
       {
-        resultsDir: process.env.SHARD_INDEX
-          ? `allure-results-${process.env.SHARD_INDEX}`
+        resultsDir: process.env.ALLURE_RESULTS_DIR
+          ? `allure-results-${process.env.ALLURE_RESULTS_DIR}`
           : 'allure-results',
       },
     ],
