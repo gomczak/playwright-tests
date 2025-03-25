@@ -84,7 +84,7 @@ jobs:
       if: ${{ !cancelled() }}
       uses: actions/upload-artifact@v4
       with:
-        name: allure-report-${{ matrix.shardIndex }}
+        name: allure-results-${{ matrix.shardIndex }}
         path: ${{ env.ALLURE_RESULTS_DIR }}
         retention-days: 1
     
@@ -105,15 +105,15 @@ jobs:
     - name: Download Allure reports from GitHub Actions Artifacts
       uses: actions/download-artifact@v4
       with:
-        path: all-allure-reports
+        path: allure-results
         pattern: allure-report-*
         merge-multiple: true
 
     - name: Merge Allure reports
       run: |
         mkdir -p merged-allure-results
-        for i in $(ls all-allure-reports); do
-          cp -r all-allure-reports/$i/* merged-allure-results/
+        for i in $(ls allure-results); do
+          cp -r allure-results/$i/* merged-allure-results/
         done
 
     - name: Generate Allure report
