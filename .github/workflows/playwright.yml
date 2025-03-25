@@ -31,6 +31,7 @@ jobs:
     env:
       TEST_APP_PATH: test-app
       NODE_VERSION: lts/*
+      ALLURE_RESULTS_DIR: allure-results-${{ matrix.shardIndex }}
 
     steps:
     - name: Checkout repository with playwright tests
@@ -75,14 +76,14 @@ jobs:
         echo "Selected options: ${selected_options[@]} ${{ github.event.inputs.files }}"
         pnpm exec playwright test ${selected_options[@]} ${{ github.event.inputs.files }} --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
 
-    - name: Upload blob report to GitHub Actions Artifacts
+    - name: Upload Allure report to GitHub Actions Artifacts
       if: ${{ !cancelled() }}
       uses: actions/upload-artifact@v4
       with:
-        name: blob-report-${{ matrix.shardIndex }}
-        path: blob-report
+        name: allure-report-${{ matrix.shardIndex }}
+        path: ${{ env.ALLURE_RESULTS_DIR }}
         retention-days: 1
-      
+    
   merge-reports:
     # Merge reports after playwright-tests, even if some shards have failed
     if: ${{ !cancelled() }}
@@ -97,19 +98,28 @@ jobs:
     - name: Install dependencies
       run: npm install -g pnpm && pnpm install --frozen-lockfile
 
-    - name: Download blob reports from GitHub Actions Artifacts
+    - name: Download Allure reports from GitHub Actions Artifacts
       uses: actions/download-artifact@v4
       with:
-        path: all-blob-reports
-        pattern: blob-report-*
+        path: all-allure-reports
+        pattern: allure-report-*
         merge-multiple: true
 
-    - name: Merge into HTML Report
-      run: pnpm exec playwright merge-reports --reporter html ./all-blob-reports
+    - name: Merge Allure reports
+      run: |
+        mkdir -p merged-allure-results
+        for i in $(ls all-allure-reports); do
+          cp -r all-allure-reports/$i/* merged-allure-results/
+        done
 
-    - name: Upload HTML report
+    - name: Generate Allure report
+      run: |
+        pnpm install -g allure-commandline
+        allure generate merged-allure-results --clean
+
+    - name: Upload Allure report
       uses: actions/upload-artifact@v4
       with:
-        name: html-report--attempt-${{ github.run_attempt }}
-        path: playwright-report
+        name: allure-report
+        path: allure-report
         retention-days: 14
