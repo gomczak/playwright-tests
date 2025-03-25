@@ -109,12 +109,12 @@ jobs:
         pattern: allure-results-*
         merge-multiple: true
 
-    - name: Merge Allure reports
-      run: |
-        mkdir -p merged-allure-results
-        for i in $(ls allure-results); do
-          cp -r allure-results/$i/* merged-allure-results/
-        done
+    # - name: Merge Allure reports
+    #   run: |
+    #     mkdir -p merged-allure-results
+    #     for i in $(ls allure-results); do
+    #       cp -r allure-results/$i/* merged-allure-results/
+    #     done
 
     # - name: Generate Allure report
     #   run: |
@@ -133,7 +133,7 @@ jobs:
       with:
         gh_pages: gh-pages
         allure_history: allure-history
-        allure_results: build/merged-allure-results
+        allure_results: build/allure-results
 
     - name: Publish test report
       uses: peaceiris/actions-gh-pages@v3
