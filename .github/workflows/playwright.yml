@@ -116,14 +116,29 @@ jobs:
           cp -r allure-results/$i/* merged-allure-results/
         done
 
-    - name: Generate Allure report
-      run: |
-        pnpm install allure-commandline 
-        allure generate merged-allure-results --clean
+    # - name: Generate Allure report
+    #   run: |
+    #     pnpm install allure-commandline 
+    #     allure generate merged-allure-results --clean
 
-    - name: Upload Allure report
-      uses: actions/upload-artifact@v4
+    # - name: Upload Allure report
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: allure-report
+    #     path: allure-report
+    #     retention-days: 14
+    - name: Build test report
+      uses: simple-elf/allure-report-action@v1.7
+      if: always()
       with:
-        name: allure-report
-        path: allure-report
-        retention-days: 14
+        gh_pages: gh-pages
+        allure_history: allure-history
+        allure_results: build/merged-allure-results
+
+    - name: Publish test report
+      uses: peaceiris/actions-gh-pages@v3
+      if: always()
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_branch: gh-pages
+        publish_dir: allure-history
