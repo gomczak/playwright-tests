@@ -121,12 +121,12 @@ jobs:
     #     pnpm install allure-commandline 
     #     allure generate merged-allure-results --clean
 
-    - name: Upload Allure report
-      uses: actions/upload-artifact@v4
-      with:
-        name: allure-results
-        path: allure-results
-        retention-days: 14
+    # - name: Upload Allure report
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: all-allure-results
+    #     path: allure-results
+    #     retention-days: 14
 
     - name: Build test report
       uses: simple-elf/allure-report-action@v1.7
