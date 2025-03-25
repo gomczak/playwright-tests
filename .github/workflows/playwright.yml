@@ -31,7 +31,7 @@ jobs:
     env:
       TEST_APP_PATH: test-app
       NODE_VERSION: lts/*
-      ALLURE_RESULTS_DIR: allure-results #-${{ matrix.shardIndex }}
+      ALLURE_RESULTS_DIR: allure-results
 
     steps:
     - name: Checkout repository with playwright tests
