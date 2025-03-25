@@ -124,8 +124,8 @@ jobs:
     - name: Upload Allure report
       uses: actions/upload-artifact@v4
       with:
-        name: allure-results
-        path: allure-report
+        name: all-allure-results
+        path: allure-results
         retention-days: 14
 
     - name: Build test report
