@@ -78,8 +78,7 @@ jobs:
         ${selected_options[@]} \
         ${{ github.event.inputs.files }} \
         --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} \
-        --reporter allure \
-        --allure-results-dir ${{ env.ALLURE_RESULTS_DIR }}
+        --reporter allure
 
     - name: Upload Allure report to GitHub Actions Artifacts
       if: ${{ !cancelled() }}
