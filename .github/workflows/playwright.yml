@@ -118,7 +118,7 @@ jobs:
 
     - name: Generate Allure report
       run: |
-        pnpm allure generate merged-allure-results --clean
+        allure generate merged-allure-results --clean
 
     - name: Upload Allure report
       uses: actions/upload-artifact@v4
