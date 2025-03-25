@@ -1,5 +1,5 @@
 *.code-workspace
-
+.env
 # Playwright
 node_modules/
 /test-results/

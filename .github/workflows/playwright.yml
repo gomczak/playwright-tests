@@ -118,6 +118,7 @@ jobs:
 
     - name: Generate Allure report
       run: |
+        pnpm install allure-commandline 
         allure generate merged-allure-results --clean
 
     - name: Upload Allure report
