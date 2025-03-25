@@ -28,7 +28,7 @@ export default defineConfig({
       {
         resultsDir: process.env.ALLURE_RESULTS_DIR
           ? `allure-results-${process.env.ALLURE_RESULTS_DIR}`
-          : 'allure-test',
+          : 'allure-results',
       },
     ],
   ],
