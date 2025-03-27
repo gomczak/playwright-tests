@@ -188,7 +188,7 @@ jobs:
       run: |
         echo "<html><body><h1>Reports</h1><ul>" > runs-history/index.html
         for dir in runs-history/*; do
-          echo "<li><a href=\"$dir\">$dir</a></li>" >> index.html
+          echo "<li><a href=\"$dir\">$dir</a></li>" >> runs-history/index.html
         done
         echo "</ul></body></html>" >> index.html
 
