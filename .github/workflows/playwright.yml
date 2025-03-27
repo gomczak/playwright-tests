@@ -80,7 +80,7 @@ jobs:
         --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} \
         --reporter allure-playwright
 
-    - name: Upload Allure report to GitHub Actions Artifacts
+    - name: Upload Allure results to GitHub Actions Artifacts
       if: ${{ !cancelled() }}
       uses: actions/upload-artifact@v4
       with:
@@ -102,7 +102,7 @@ jobs:
     - name: Install dependencies
       run: npm install -g pnpm && pnpm install --frozen-lockfile
 
-    - name: Download Allure reports from GitHub Actions Artifacts
+    - name: Download and merge Allure reports from GitHub Actions Artifacts
       uses: actions/download-artifact@v4
       with:
         path: allure-results
@@ -121,12 +121,12 @@ jobs:
     #     pnpm install allure-commandline 
     #     allure generate merged-allure-results --clean
 
-    # - name: Upload Allure report
-    #   uses: actions/upload-artifact@v4
-    #   with:
-    #     name: all-allure-results
-    #     path: allure-results
-    #     retention-days: 14
+    - name: Upload merged Allure results
+      uses: actions/upload-artifact@v4
+      with:
+        name: all-allure-results
+        path: allure-results
+        retention-days: 14
 
     - name: Build test report
       uses: simple-elf/allure-report-action@v1.7
@@ -134,7 +134,7 @@ jobs:
       with:
         gh_pages: gh-pages
         allure_history: allure-history
-        allure_results: allure-results
+        allure_results: all-allure-results
 
     - name: Publish test report
       uses: peaceiris/actions-gh-pages@v3
