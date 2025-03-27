@@ -74,6 +74,7 @@ jobs:
           selected_options+=("/test-examples")
         fi
         echo "Selected options: ${selected_options[@]} ${{ github.event.inputs.files }}"
+        chmod +x _ci/tests_run.sh
         _ci/tests_run.sh
 
     - name: Upload Allure report to GitHub Actions Artifacts
