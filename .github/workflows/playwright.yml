@@ -146,7 +146,7 @@ jobs:
 
     - name: Generate timestamp
       id: timestamp
-      run: echo "::set-output name=timestamp::$(date +%Y%m%d%H%M%S)"
+      run: echo "{timestamp}={$(date +%Y-%m-%d-%H-%M-%S)}" >> $GITHUB_OUTPUT
   
     - name: Create reports directory
       run: mkdir -p runs-history/${{ steps.timestamp.outputs.timestamp }}
@@ -181,6 +181,9 @@ jobs:
     #     cd allure-history
     #     ls -t | tail -n +11 | xargs rm -rf
   
+    - name: Setup Pages
+      uses: actions/configure-pages@v4
+
     - name: Generate index.html
       run: |
         cd runs-history
