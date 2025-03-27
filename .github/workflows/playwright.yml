@@ -166,23 +166,11 @@ jobs:
         gh_pages: gh-pages
         allure_history: allure-history
         allure_results: allure-results
-    # - name: Generate Allure report
-    #   run: |
-    #     pnpm install allure-commandline 
-    #     allure generate allure-results --clean -o allure-report
   
     - name: Copy Allure report
       run: |
         mkdir -p runs-history/${{ steps.timestamp.outputs.timestamp }}
         cp -R allure-report/. runs-history/${{ steps.timestamp.outputs.timestamp }}
-  
-    # - name: Limit reports to last 10
-    #   run: |
-    #     cd allure-history
-    #     ls -t | tail -n +11 | xargs rm -rf
-  
-    # - name: Setup Pages
-    #   uses: actions/configure-pages@v4
 
     - name: Generate index.html
       run: |
