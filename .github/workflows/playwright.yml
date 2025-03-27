@@ -74,11 +74,7 @@ jobs:
           selected_options+=("/test-examples")
         fi
         echo "Selected options: ${selected_options[@]} ${{ github.event.inputs.files }}"
-        pnpm exec playwright test \
-        ${selected_options[@]} \
-        ${{ github.event.inputs.files }} \
-        --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} \
-        --reporter allure-playwright
+        _ci/tests_run.sh
 
     - name: Upload Allure report to GitHub Actions Artifacts
       if: ${{ !cancelled() }}
