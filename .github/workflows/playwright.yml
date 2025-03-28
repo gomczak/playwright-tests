@@ -169,12 +169,12 @@ jobs:
   
     - name: Copy Allure report
       run: |
-        mkdir -p runs-history/${{ steps.timestamp.outputs.timestamp }}
-        cp -R allure-report/. runs-history/${{ steps.timestamp.outputs.timestamp }}
+        mkdir -p allure-history/${{ steps.timestamp.outputs.timestamp }}
+        cp -R allure-report/. allure-history/${{ steps.timestamp.outputs.timestamp }}
 
     - name: Generate index.html
       run: |
-        cd runs-history
+        cd allure-history
         echo "<html><body><h1>Allure Reports Runs History</h1><ul>" > index.html
         for dir in */; do
           echo "<li><a href=\"$dir\">$dir</a></li>" >> index.html
