@@ -169,7 +169,7 @@ jobs:
   
     - name: Copy Allure report
       run: |
-        chmod +w allure-histoy
+        chmod +w allure-history
         mkdir -p allure-history/${{ steps.timestamp.outputs.timestamp }}
         cp -R allure-report/. allure-history/${{ steps.timestamp.outputs.timestamp }}
 
