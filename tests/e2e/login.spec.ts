@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Login tests', {
+test.describe('Login tests @allure.label.tag:loginTEST', {
     tag: '@logintag',
 }, () => {
     test('log in page', async ({ page }) => {
