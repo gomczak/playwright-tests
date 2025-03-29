@@ -93,10 +93,6 @@ jobs:
     if: ${{ !cancelled() }}
     needs: [playwright-tests]
 
-    permissions:
-      pages: write
-      id-token: write
-
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -177,7 +173,10 @@ jobs:
         path: allure-history
 
   deploy:
-    needs: merge-reports
+    needs: [merge-reports]
+    permissions:
+      pages: write
+      id-token: write
     runs-on: ubuntu-latest
     environment:
       name: github-pages
