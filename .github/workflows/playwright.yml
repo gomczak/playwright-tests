@@ -93,6 +93,10 @@ jobs:
     if: ${{ !cancelled() }}
     needs: [playwright-tests]
 
+    permissions:
+      pages: write
+      id-token: write
+
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -166,26 +170,41 @@ jobs:
         gh_pages: gh-pages
         allure_history: allure-history
         allure_results: allure-results
-  
-    - name: Copy Allure report
-      run: |
-        chmod +w allure-history
-        mkdir -p allure-history/${{ steps.timestamp.outputs.timestamp }}
-        cp -R allure-report/. allure-history/${{ steps.timestamp.outputs.timestamp }}
 
-    - name: Generate index.html
-      run: |
-        cd allure-history
-        echo "<html><body><h1>Allure Reports Runs History</h1><ul>" > index.html
-        for dir in */; do
-          echo "<li><a href=\"$dir\">$dir</a></li>" >> index.html
-        done
-        echo "</ul></body></html>" >> index.html
-
-    - name: Publish test report
-      uses: peaceiris/actions-gh-pages@v3
-      if: always()
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_branch: gh-pages
-        publish_dir: allure-history
+        path: allure-history
+
+  deploy:
+    needs: merge-reports
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+  
+    # - name: Copy Allure report
+    #   run: |
+    #     chmod +w allure-history
+    #     mkdir -p allure-history/${{ steps.timestamp.outputs.timestamp }}
+    #     cp -R allure-report/. allure-history/${{ steps.timestamp.outputs.timestamp }}
+
+    # - name: Generate index.html
+    #   run: |
+    #     cd allure-history
+    #     echo "<html><body><h1>Allure Reports Runs History</h1><ul>" > index.html
+    #     for dir in */; do
+    #       echo "<li><a href=\"$dir\">$dir</a></li>" >> index.html
+    #     done
+    #     echo "</ul></body></html>" >> index.html
+
+    # - name: Publish test report
+    #   uses: peaceiris/actions-gh-pages@v3
+    #   if: always()
+    #   with:
+    #     github_token: ${{ secrets.GITHUB_TOKEN }}
+    #     publish_branch: gh-pages
+    #     publish_dir: allure-history
