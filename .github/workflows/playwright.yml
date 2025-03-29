@@ -109,47 +109,12 @@ jobs:
         pattern: allure-results-*
         merge-multiple: true
 
-    # - name: Merge Allure reports
-    #   run: |
-    #     mkdir -p merged-allure-results
-    #     for i in $(ls allure-results); do
-    #       cp -r allure-results/$i/* merged-allure-results/
-    #     done
-
-    # - name: Generate Allure report
-    #   run: |
-    #     pnpm install allure-commandline 
-    #     allure generate merged-allure-results --clean
-
     - name: Upload merged Allure results
       uses: actions/upload-artifact@v4
       with:
         name: all-allure-results
         path: allure-results
         retention-days: 14
-
-    # - name: Load test report history
-    #   uses: actions/checkout@v4
-    #   if: always()
-    #   continue-on-error: true
-    #   with:
-    #     ref: gh-pages
-    #     path: gh-pages
-
-    # - name: Build test report
-    #   uses: simple-elf/allure-report-action@v1.7
-    #   if: always()
-    #   with:
-    #     gh_pages: gh-pages
-    #     allure_history: allure-history
-    #     allure_results: allure-results
-
-    - name: Generate timestamp
-      id: timestamp
-      run: echo "timestamp=$(date +%Y-%m-%d-%H-%M-%S)" >> $GITHUB_OUTPUT
-  
-    - name: Create reports directory
-      run: mkdir -p runs-history/${{ steps.timestamp.outputs.timestamp }}
   
     - name: Load test report history
       uses: actions/checkout@v4
@@ -180,25 +145,11 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-  
-    # - name: Copy Allure report
-    #   run: |
-    #     chmod +w allure-history
-    #     mkdir -p allure-history/${{ steps.timestamp.outputs.timestamp }}
-    #     cp -R allure-report/. allure-history/${{ steps.timestamp.outputs.timestamp }}
-
-    # - name: Generate index.html
-    #   run: |
-    #     cd allure-history
-    #     echo "<html><body><h1>Allure Reports Runs History</h1><ul>" > index.html
-    #     for dir in */; do
-    #       echo "<li><a href=\"$dir\">$dir</a></li>" >> index.html
-    #     done
-    #     echo "</ul></body></html>" >> index.html
 
     # - name: Publish test report
     #   uses: peaceiris/actions-gh-pages@v3
