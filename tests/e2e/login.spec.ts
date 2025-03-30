@@ -20,6 +20,8 @@ test.describe('Login tests', {
         await allure.epic("Web interface");
         await allure.feature("Essential features");
         await allure.story("Authentication");
+        await allure.issue("123")
+
         await page.goto('http://localhost:3000/login');
         await expect(page.locator('h2')).toHaveText('Log in');
     });

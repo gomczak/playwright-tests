@@ -2,6 +2,8 @@ import { defineConfig, devices } from '@playwright/test';
 import dotenv from 'dotenv';
 import path from 'path';
 dotenv.config({ path: path.resolve(__dirname, '.env') });
+import * as os from "node:os";
+
 
 /**
  * Read environment variables from file.
@@ -30,9 +32,20 @@ export default defineConfig({
           ? `allure-results-${process.env.ALLURE_RESULTS_DIR}`
           : 'allure-results',
         environmentInfo: {
+          os_platform: os.platform(),
+          os_release: os.release(),
+          os_version: os.version(),
+          node_version: process.version,
           env_url: 'https://example.com',
-        },
-      },
+          links: {
+            issue: {
+              nameTemplate: "Issue #%s",
+              urlTemplate: "https://issues.example.com/%s",
+            },
+            jira: {
+              urlTemplate: (v) => `https://jira.example.com/browse/${v}`,
+            },
+          },
     ],
   ],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
