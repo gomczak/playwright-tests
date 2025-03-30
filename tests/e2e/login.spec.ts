@@ -11,10 +11,6 @@ test.describe('Login tests', {
                 type: 'issue',
                 description: 'https://github.com/microsoft/playwright/issues/23180'
             },
-            {
-                type: 'epic',
-                description: 'Web interface'
-            },
         ],
     },
         async ({ page }) => {
@@ -26,7 +22,7 @@ test.describe('Login tests', {
         await allure.epic("Web interface");
         await allure.feature("Essential features");
         await allure.story("Authentication");
-        await allure.issue("123");
+        await allure.issue("AUTH-123", "Related issue");
         await allure.link("ABC-123", "Related Jira issue", "jira");
 
         await page.goto('http://localhost:3000/login');
