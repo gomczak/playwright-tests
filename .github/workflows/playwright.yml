@@ -131,8 +131,16 @@ jobs:
         gh_pages: gh-pages
         allure_history: allure-history
         allure_results: allure-results
+    
+    - name: Upload Allure report to GitHub Actions Artifacts
+      if: ${{ !cancelled() }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: allure-report
+        path: allure-report
+        retention-days: 1
 
-    - name: Upload artifact
+    - name: Upload artifact for gh pages
       uses: actions/upload-pages-artifact@v3
       with:
         path: allure-history
