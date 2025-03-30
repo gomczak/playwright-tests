@@ -1,5 +1,7 @@
 import { test, expect } from '@playwright/test';
 import * as allure from "allure-js-commons";
+import os from 'os';
+
 
 
 test.describe('Login tests', {
@@ -26,6 +28,16 @@ test.describe('Login tests', {
         await allure.tms("123");
         await allure.link("ABC-123", "jira ticket", "jira");
         await allure.link("ABC-123", "", "xray");
+
+        const environmentInfo = {
+            os_platform: os.platform(),
+            os_release: os.release(),
+            os_version: os.version(),
+            node_version: process.version,
+            env_url: "https://env.example.com/",
+        };
+
+        console.log("Environment Info:", environmentInfo);
 
         await page.goto('http://localhost:3000/login');
         await expect(page.locator('h2')).toHaveText('Log in');
