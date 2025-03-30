@@ -22,8 +22,10 @@ test.describe('Login tests', {
         await allure.epic("Web interface");
         await allure.feature("Essential features");
         await allure.story("Authentication");
-        await allure.issue("AUTH-123", "Related issue");
-        await allure.link("ABC-123", "Related Jira issue", "jira");
+        await allure.issue("AUTH-123");
+        await allure.tms("123");
+        await allure.link("ABC-123", "jira ticket", "jira");
+        await allure.link("ABC-123", "", "xray");
 
         await page.goto('http://localhost:3000/login');
         await expect(page.locator('h2')).toHaveText('Log in');

@@ -13,7 +13,7 @@ import * as os from "node:os";
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
-const config: PlaywrightTestConfig = {
+export default defineConfig({
   testDir: './tests',
   /* Run tests in files in parallel */
   fullyParallel: true,
@@ -36,14 +36,19 @@ const config: PlaywrightTestConfig = {
           os_release: os.release(),
           os_version: os.version(),
           node_version: process.version,
-          links: {
-            issue: {
-              nameTemplate: "Issue #%s",
-              urlTemplate: "https://issues.example.com/%s",
-            },
-            jira: {
-              urlTemplate: (v) => `https://jira.example.com/browse/${v}`,
-            },
+          env_url: "https://env.example.com/"
+        },
+        links: {
+          issue: {
+            nameTemplate: "Issue #%s",
+            urlTemplate: "https://issues.example.com/%s",
+          },
+          jira: {
+            urlTemplate: (v) => `https://jira.example.com/browse/${v}`,
+          },
+          xray: {
+            nameTemplate: "Xray #%s",
+            urlTemplate: "https://xray.example.com/%s",
           },
         },
       },
@@ -103,6 +108,4 @@ const config: PlaywrightTestConfig = {
   //   url: 'http://127.0.0.1:3000',
   //   reuseExistingServer: !process.env.CI,
   // },
-};
-
-export default config;
+});
