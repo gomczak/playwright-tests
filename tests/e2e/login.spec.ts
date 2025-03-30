@@ -5,13 +5,17 @@ import * as allure from "allure-js-commons";
 test.describe('Login tests', {
     tag: '@logintag',
 }, () => {
-    allure.epic("TEST Web interface");
-
     test('log in page', {
-        annotation: {
-            type: 'issue',
-            description: 'https://github.com/microsoft/playwright/issues/23180',
-        },
+        annotation: [
+            {
+                type: 'issue',
+                description: 'https://github.com/microsoft/playwright/issues/23180'
+            },
+            {
+                type: 'epic',
+                description: 'Web interface'
+            },
+        ],
     },
         async ({ page }) => {
             await page.goto('http://localhost:3000/login');
