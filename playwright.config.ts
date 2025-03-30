@@ -32,8 +32,8 @@ export default defineConfig({
           ? `allure-results-${process.env.ALLURE_RESULTS_DIR}`
           : 'allure-results',
         environmentInfo: {
-          os_platform: os.platform(),
-          os_release: os.release(),
+          os_platform: process.env.RUNNER_OS || os.platform(),
+          os_release: process.env.ImageOS || os.release(),
           os_version: os.version(),
           node_version: process.version,
           env_url: "https://env.example.com/"
