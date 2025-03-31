@@ -28,9 +28,10 @@ export default defineConfig({
     [
       "allure-playwright",
       {
-        resultsDir: process.env.ALLURE_RESULTS_DIR
-          ? `allure-results-${process.env.ALLURE_RESULTS_DIR}`
-          : 'allure-results',
+        // resultsDir: process.env.ALLURE_RESULTS_DIR
+        //   ? `allure-results-${process.env.ALLURE_RESULTS_DIR}`
+        //   : 'allure-results',
+        resultsDir: 'allure-results',
         environmentInfo: {
           os_platform: process.env.RUNNER_OS || os.platform(),
           os_release: process.env.ImageOS || os.release(),
