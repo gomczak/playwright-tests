@@ -96,11 +96,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: lts/*
-    - name: Install dependencies
-      run: npm install -g pnpm && pnpm install --frozen-lockfile
+    # - uses: actions/setup-node@v4
+    #   with:
+    #     node-version: lts/*
+    # - name: Install dependencies
+    #   run: npm install -g pnpm && pnpm install --frozen-lockfile
 
     - name: Download and merge Allure reports from GitHub Actions Artifacts
       uses: actions/download-artifact@v4
