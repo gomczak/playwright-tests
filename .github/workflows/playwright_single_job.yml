@@ -1,0 +1,99 @@
+name: test single job
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+    inputs:
+      files:
+        description: 'Put path to folders or names of files separated by space'
+        type: string
+      e2e:
+        type: boolean
+        default: false
+        description: Select e2e folder
+      tests_examples:
+        type: boolean
+        default: false
+        description: Select tests-examples folder
+
+jobs:
+  playwright-tests:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    # strategy:
+    #   fail-fast: false
+    #   matrix:
+    #     shardIndex: [1, 2, 3, 4, 5]
+    #     shardTotal: [5]
+
+    env:
+      TEST_APP_PATH: test-app
+      NODE_VERSION: lts/*
+      ALLURE_RESULTS_DIR: allure-results
+
+    steps:
+    - name: Checkout repository with playwright tests
+      uses: actions/checkout@v4
+    
+    - uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+    
+    - name: Checkout external repository with test-app project
+      uses: actions/checkout@v4
+      with:
+        repository: "gomczak/test-app"
+        path: ${{ env.TEST_APP_PATH }}
+
+    - name: Create .env file for test app
+      working-directory: ${{ env.TEST_APP_PATH }}
+      run: |
+        touch .env
+        echo "${{secrets.ENV_SECRETS}}" >> .env
+
+    - name: Run docker compose
+      working-directory: ${{ env.TEST_APP_PATH }}
+      run: |
+        docker compose up --build -d
+
+    - name: Install dependencies
+      run: npm install -g pnpm && pnpm install --frozen-lockfile
+
+    - name: Install Playwright Browsers
+      run: pnpm exec playwright install --with-deps
+
+    - name: Run Playwright tests
+      run: |
+        selected_options=()
+        if [[ "${{ github.event.inputs.e2e }}" == "true" ]]; then
+          selected_options+=("/e2e")
+        fi
+        if [[ "${{ github.event.inputs.tests_examples }}" == "true" ]]; then
+          selected_options+=("/test-examples")
+        fi
+        echo "Selected options: ${selected_options[@]} ${{ github.event.inputs.files }}"
+        pnpm exec playwright test \
+        ${selected_options[@]} \
+        ${{ github.event.inputs.files }} \
+        --reporter allure-playwright
+
+    - name: Build test report
+      uses: simple-elf/allure-report-action@v1.7
+      if: always()
+      with:
+        gh_pages: gh-pages
+        allure_history: allure-history
+        allure_results: allure-results
+
+    - name: Publish test report
+      uses: peaceiris/actions-gh-pages@v3
+      if: always()
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_branch: gh-pages
+        publish_dir: allure-history
+
+
+
