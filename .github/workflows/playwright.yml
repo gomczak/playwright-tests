@@ -126,10 +126,10 @@ jobs:
 
     - name: Install Allure
       run: |
-        ALLURE_VERSION=2.21.0
+        ALLURE_VERSION=2.32.0
         wget -qO /tmp/allure-$ALLURE_VERSION.tgz https://github.com/allure-framework/allure2/releases/download/$ALLURE_VERSION/allure-$ALLURE_VERSION.tgz
         tar -xf /tmp/allure-$ALLURE_VERSION.tgz --directory=/opt/
-        ln -s /opt/allure-$ALLURE_VERSION/bin/allure /usr/bin/allure
+        sudo ln -s /opt/allure-$ALLURE_VERSION/bin/allure /usr/bin/allure
         
     - name: Build test report
       run: |
