@@ -28,6 +28,7 @@ test.describe('Login tests @loginTagTitle', {
         await allure.tms("123");
         await allure.link("ABC-123", "jira ticket", "jira");
         await allure.link("ABC-123", "", "xray");
+        await allure.parameter("browser", "chrome");
 
         const environmentInfo = {
             os_platform: os.platform(),
