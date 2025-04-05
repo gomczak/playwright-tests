@@ -102,7 +102,7 @@ jobs:
     # - name: Install dependencies
     #   run: npm install -g pnpm && pnpm install --frozen-lockfile
 
-    - name: Download and merge Allure reports from GitHub Actions Artifacts
+    - name: Download and merge Allure results from GitHub Actions Artifacts
       uses: actions/download-artifact@v4
       with:
         path: allure-results
