@@ -95,13 +95,35 @@ jobs:
         allure_history: allure-history
         allure_results: allure-results
 
+    - name: Load existing index.html
+      if: always()
+      run: |
+        mkdir -p gh-pages
+        git clone --branch gh-pages https://github.com/${{ github.repository }} gh-pages || echo "No existing gh-pages branch"
+        touch gh-pages/index.html
+  
+    - name: Append new entry to index.html
+      if: always()
+      run: |
+        echo "<html>" > tmp_index.html
+        echo "<head><title>Test Results</title></head>" >> tmp_index.html
+        echo "<body>" >> tmp_index.html
+        echo "<h1>Test Results</h1>" >> tmp_index.html
+        echo "<ul>" >> tmp_index.html
+        cat gh-pages/index.html | sed '/<\/ul>/d' >> tmp_index.html
+        echo "<li>Date of Run: $(date) - <a href='./allure-history'>View Test Report</a></li>" >> tmp_index.html
+        echo "</ul>" >> tmp_index.html
+        echo "</body>" >> tmp_index.html
+        echo "</html>" >> tmp_index.html
+        mv tmp_index.html gh-pages/index.html
+
     - name: Publish test report
       uses: peaceiris/actions-gh-pages@v3
       if: always()
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_branch: gh-pages
-        publish_dir: allure-history
+        publish_dir: gh-pages
 
 
 
