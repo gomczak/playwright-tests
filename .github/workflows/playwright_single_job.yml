@@ -98,7 +98,7 @@ jobs:
     - name: Load existing index.html
       if: always()
       run: |
-        git clone --branch gh-pages https://github.com/${{ github.repository }}.git allure-history || true
+        git clone --branch gh-pages https://github.com/${{ github.repository }}.git gh-pages || true
         touch gh-pages/index.html
   
     - name: Append new entry to index.html
