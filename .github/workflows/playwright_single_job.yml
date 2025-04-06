@@ -67,6 +67,9 @@ jobs:
     - name: Run Playwright tests
       run: |
         echo ${{github.run_id}}
+        echo ${{github.job}}
+        echo ${{github.run_number}}
+        echo ${{github.run_attempt}}
         selected_options=()
         if [[ "${{ github.event.inputs.e2e }}" == "true" ]]; then
           selected_options+=("/e2e")
