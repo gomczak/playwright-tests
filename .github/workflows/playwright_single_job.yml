@@ -111,7 +111,7 @@ jobs:
         echo "<!DOCTYPE html>" > gh-pages/index.html
         echo "<html lang='en'>" >> gh-pages/index.html
         echo "<head>" >> gh-pages/index.html
-        echo "  <meta charset='UTF-8'>" >> gh-pages/index.html
+        # echo "  <meta charset='UTF-8'>" >> gh-pages/index.html
         echo "  <title>Test Results History</title>" >> gh-pages/index.html
         echo "</head>" >> gh-pages/index.html
         echo "<body>" >> gh-pages/index.html
@@ -119,7 +119,7 @@ jobs:
         echo "  <ul>" >> gh-pages/index.html
         
         # Add new entry first
-        echo "    <li>$(date -u '+%Y-%m-%d %H:%M:%S UTC') - <a href='./${{github.run_number}}'>Latest Report</a></li>" >> gh-pages/index.html
+        echo "    <li>$(TZ=UTC+2 date '+%Y-%m-%d %H:%M:%S UTC+2') - <a href='./${{github.run_number}}'>Latest Report</a></li>" >> gh-pages/index.html
         
         # Append existing entries if any
         if [ -n "$EXISTING_ENTRIES" ]; then
@@ -130,8 +130,6 @@ jobs:
         echo "</body>" >> gh-pages/index.html
         echo "</html>" >> gh-pages/index.html
 
-        # chmod +w gh-pages/index.html
-        # chmod +w allure-history
         sudo chown $USER gh-pages/index.html
         sudo chown $USER allure-history/
         mv gh-pages/index.html allure-history/
