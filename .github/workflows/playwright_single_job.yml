@@ -100,9 +100,8 @@ jobs:
       run: |
         mkdir -p gh-pages
         # Clone with depth=1 to get only latest commit
-        git clone --branch gh-pages --depth 1 https://github.com/${{ github.repository }}.git gh-pages || true
+        git clone --branch gh-pages https://github.com/${{ github.repository }}.git gh-pages || true
         # Create empty index.html if none exists
-        rm -f gh-pages/index.html
         touch gh-pages/index.html
   
     - name: Append new entry to index.html
