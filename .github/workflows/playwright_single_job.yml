@@ -99,24 +99,39 @@ jobs:
       if: always()
       run: |
         mkdir -p gh-pages
-        git clone --branch gh-pages https://github.com/${{ github.repository }} gh-pages || echo "No existing gh-pages branch"
+        # Clone with depth=1 to get only latest commit
+        git clone --branch gh-pages --depth 1 https://github.com/${{ github.repository }}.git gh-pages || true
+        # Create empty index.html if none exists
         touch gh-pages/index.html
   
     - name: Append new entry to index.html
       if: always()
       run: |
-        echo "<html>" > tmp_index.html
-        echo "<head><title>Test Results</title></head>" >> tmp_index.html
-        echo "  <meta charset='UTF-8'> URL=https://gomczak.github.io/playwright-tests/" >> tmp_index.html
-        echo "<body>" >> tmp_index.html
-        echo "<h1>Test Results</h1>" >> tmp_index.html
-        echo "<ul>" >> tmp_index.html
-        cat gh-pages/index.html | sed '/<\/ul>/d' >> tmp_index.html
-        echo "<li>Date of Run: $(date) - <a href='./allure-history'>View Test Report</a></li>" >> tmp_index.html
-        echo "</ul>" >> tmp_index.html
-        echo "</body>" >> tmp_index.html
-        echo "</html>" >> tmp_index.html
-        mv tmp_index.html gh-pages/index.html
+        # Extract existing list items while removing redirect meta tags
+        EXISTING_ENTRIES=$(sed -n '/<ul>/,/<\/ul>/p' gh-pages/index.html | sed '/meta/d' | sed '/<ul>/d;/<\/ul>/d' || true)
+        
+        # Build new index.html
+        echo "<!DOCTYPE html>" > gh-pages/index.html
+        echo "<html lang='en'>" >> gh-pages/index.html
+        echo "<head>" >> gh-pages/index.html
+        echo "  <meta charset='UTF-8'>" >> gh-pages/index.html
+        echo "  <title>Test Results History</title>" >> gh-pages/index.html
+        echo "</head>" >> gh-pages/index.html
+        echo "<body>" >> gh-pages/index.html
+        echo "  <h1>Test Results History</h1>" >> gh-pages/index.html
+        echo "  <ul>" >> gh-pages/index.html
+        
+        # Add new entry first
+        echo "    <li>$(date -u '+%Y-%m-%d %H:%M:%S UTC') - <a href='./allure-history'>Latest Report</a></li>" >> gh-pages/index.html
+        
+        # Append existing entries if any
+        if [ -n "$EXISTING_ENTRIES" ]; then
+        echo "$EXISTING_ENTRIES" >> gh-pages/index.html
+        fi
+        
+        echo "  </ul>" >> gh-pages/index.html
+        echo "</body>" >> gh-pages/index.html
+        echo "</html>" >> gh-pages/index.html
 
     - name: Publish test report
       uses: peaceiris/actions-gh-pages@v3
