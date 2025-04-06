@@ -66,10 +66,6 @@ jobs:
 
     - name: Run Playwright tests
       run: |
-        echo ${{github.run_id}}
-        echo ${{github.job}}
-        echo ${{github.run_number}}
-        echo ${{github.run_attempt}}
         selected_options=()
         if [[ "${{ github.event.inputs.e2e }}" == "true" ]]; then
           selected_options+=("/e2e")
@@ -127,7 +123,7 @@ jobs:
         echo "  <ul>" >> gh-pages/index.html
         
         # Add new entry first
-        echo "    <li>$(date -u '+%Y-%m-%d %H:%M:%S UTC') - <a href='./allure-history'>Latest Report</a></li>" >> gh-pages/index.html
+        echo "    <li>$(date -u '+%Y-%m-%d %H:%M:%S UTC') - <a href='./${{github.run_number}}'>Latest Report</a></li>" >> gh-pages/index.html
         
         # Append existing entries if any
         if [ -n "$EXISTING_ENTRIES" ]; then
