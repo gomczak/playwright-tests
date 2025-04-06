@@ -98,40 +98,37 @@ jobs:
     - name: Load existing index.html
       if: always()
       run: |
-        mkdir -p gh-pages
-        # Clone with depth=1 to get only latest commit
-        git clone --branch gh-pages https://github.com/${{ github.repository }}.git gh-pages || true
-        # Create empty index.html if none exists
-        touch gh-pages/index.html
+        git clone --branch gh-pages https://github.com/${{ github.repository }}.git allure-history || true
+        touch allure-history/index.html
   
     - name: Append new entry to index.html
       if: always()
       run: |
         # Extract existing list items while removing redirect meta tags
-        EXISTING_ENTRIES=$(sed -n '/<ul>/,/<\/ul>/p' gh-pages/index.html | sed '/meta/d' | sed '/<ul>/d;/<\/ul>/d' || true)
+        EXISTING_ENTRIES=$(sed -n '/<ul>/,/<\/ul>/p' allure-history/index.html | sed '/meta/d' | sed '/<ul>/d;/<\/ul>/d' || true)
         
         # Build new index.html
-        echo "<!DOCTYPE html>" > gh-pages/index.html
-        echo "<html lang='en'>" >> gh-pages/index.html
-        echo "<head>" >> gh-pages/index.html
-        echo "  <meta charset='UTF-8'>" >> gh-pages/index.html
-        echo "  <title>Test Results History</title>" >> gh-pages/index.html
-        echo "</head>" >> gh-pages/index.html
-        echo "<body>" >> gh-pages/index.html
-        echo "  <h1>Test Results History</h1>" >> gh-pages/index.html
-        echo "  <ul>" >> gh-pages/index.html
+        echo "<!DOCTYPE html>" > allure-history/index.html
+        echo "<html lang='en'>" >> allure-history/index.html
+        echo "<head>" >> allure-history/index.html
+        echo "  <meta charset='UTF-8'>" >> allure-history/index.html
+        echo "  <title>Test Results History</title>" >> allure-history/index.html
+        echo "</head>" >> allure-history/index.html
+        echo "<body>" >> allure-history/index.html
+        echo "  <h1>Test Results History</h1>" >> allure-history/index.html
+        echo "  <ul>" >> allure-history/index.html
         
         # Add new entry first
-        echo "    <li>$(date -u '+%Y-%m-%d %H:%M:%S UTC') - <a href='./${{github.run_number}}'>Latest Report</a></li>" >> gh-pages/index.html
+        echo "    <li>$(date -u '+%Y-%m-%d %H:%M:%S UTC') - <a href='./${{github.run_number}}'>Latest Report</a></li>" >> allure-history/index.html
         
         # Append existing entries if any
         if [ -n "$EXISTING_ENTRIES" ]; then
-        echo "$EXISTING_ENTRIES" >> gh-pages/index.html
+        echo "$EXISTING_ENTRIES" >> allure-history/index.html
         fi
         
-        echo "  </ul>" >> gh-pages/index.html
-        echo "</body>" >> gh-pages/index.html
-        echo "</html>" >> gh-pages/index.html
+        echo "  </ul>" >> allure-history/index.html
+        echo "</body>" >> allure-history/index.html
+        echo "</html>" >> allure-history/index.html
 
     - name: Publish test report
       uses: peaceiris/actions-gh-pages@v3
@@ -139,7 +136,7 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_branch: gh-pages
-        publish_dir: gh-pages
+        publish_dir: allure-history
 
 
 
