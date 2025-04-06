@@ -66,6 +66,7 @@ jobs:
 
     - name: Run Playwright tests
       run: |
+        echo ${{github.run_id}}
         selected_options=()
         if [[ "${{ github.event.inputs.e2e }}" == "true" ]]; then
           selected_options+=("/e2e")
@@ -102,6 +103,7 @@ jobs:
         # Clone with depth=1 to get only latest commit
         git clone --branch gh-pages --depth 1 https://github.com/${{ github.repository }}.git gh-pages || true
         # Create empty index.html if none exists
+        rm -f gh-pages/index.html
         touch gh-pages/index.html
   
     - name: Append new entry to index.html
