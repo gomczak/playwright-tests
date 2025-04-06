@@ -130,6 +130,8 @@ jobs:
         echo "</body>" >> gh-pages/index.html
         echo "</html>" >> gh-pages/index.html
 
+        chmod +w gh-pages/index.html
+        chmod +w allure-history
         mv gh-pages/index.html allure-history/
 
     - name: Publish test report
