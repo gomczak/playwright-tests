@@ -107,7 +107,7 @@ jobs:
       run: |
         echo "<html>" > tmp_index.html
         echo "<head><title>Test Results</title></head>" >> tmp_index.html
-        echo "  <meta charset='UTF-8'>" >> tmp_index.html
+        echo "  <meta charset='UTF-8'> URL=https://gomczak.github.io/playwright-tests/" >> tmp_index.html
         echo "<body>" >> tmp_index.html
         echo "<h1>Test Results</h1>" >> tmp_index.html
         echo "<ul>" >> tmp_index.html
