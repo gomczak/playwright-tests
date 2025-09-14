@@ -96,13 +96,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: lts/*
-    - name: Install dependencies
-      run: npm install -g pnpm && pnpm install --frozen-lockfile
+    # - uses: actions/setup-node@v4
+    #   with:
+    #     node-version: lts/*
+    # - name: Install dependencies
+    #   run: npm install -g pnpm && pnpm install --frozen-lockfile
 
-    - name: Download and merge Allure reports from GitHub Actions Artifacts
+    - name: Download and merge Allure results from GitHub Actions Artifacts
       uses: actions/download-artifact@v4
       with:
         path: allure-results
@@ -131,8 +131,16 @@ jobs:
         gh_pages: gh-pages
         allure_history: allure-history
         allure_results: allure-results
+    
+    - name: Upload Allure report to GitHub Actions Artifacts
+      if: ${{ !cancelled() }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: allure-report
+        path: allure-report
+        retention-days: 1
 
-    - name: Upload artifact
+    - name: Upload artifact for gh pages
       uses: actions/upload-pages-artifact@v3
       with:
         path: allure-history
