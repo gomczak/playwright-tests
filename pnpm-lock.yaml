@@ -21,6 +21,9 @@ importers:
       allure-commandline:
         specifier: ^2.33.0
         version: 2.33.0
+      allure-js-commons:
+        specifier: ^3.2.1
+        version: 3.2.1(allure-playwright@3.2.1(@playwright/test@1.50.1))
       allure-playwright:
         specifier: ^3.2.1
         version: 3.2.1(@playwright/test@1.50.1)

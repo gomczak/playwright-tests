@@ -96,13 +96,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: lts/*
-    - name: Install dependencies
-      run: npm install -g pnpm && pnpm install --frozen-lockfile
+    # - uses: actions/setup-node@v4
+    #   with:
+    #     node-version: lts/*
+    # - name: Install dependencies
+    #   run: npm install -g pnpm && pnpm install --frozen-lockfile
 
-    - name: Download and merge Allure reports from GitHub Actions Artifacts
+    - name: Download and merge Allure results from GitHub Actions Artifacts
       uses: actions/download-artifact@v4
       with:
         path: allure-results
@@ -124,37 +124,56 @@ jobs:
         ref: gh-pages
         path: gh-pages
 
+    - name: Install Allure
+      run: |
+        ALLURE_VERSION=2.32.0
+        wget -qO /tmp/allure-$ALLURE_VERSION.tgz https://github.com/allure-framework/allure2/releases/download/$ALLURE_VERSION/allure-$ALLURE_VERSION.tgz
+        tar -xf /tmp/allure-$ALLURE_VERSION.tgz --directory=/opt/
+        sudo ln -s /opt/allure-$ALLURE_VERSION/bin/allure /usr/bin/allure
+        
     - name: Build test report
-      uses: simple-elf/allure-report-action@v1.7
+      run: |
+          pwd
+          find . -type d
+          allure generate ./allure-results --clean
+      # uses: simple-elf/allure-report-action@v1.7
+      # if: always()
+      # with:
+      #   gh_pages: gh-pages
+      #   allure_history: allure-history
+      #   allure_results: allure-results
+    
+    - name: Upload Allure report to GitHub Actions Artifacts
+      if: ${{ !cancelled() }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: allure-report
+        path: allure-report
+        retention-days: 1
+
+  #   - name: Upload artifact for gh pages
+  #     uses: actions/upload-pages-artifact@v3
+  #     with:
+  #       path: allure-history
+
+  # deploy:
+  #   needs: [merge-reports]
+  #   permissions:
+  #     pages: write
+  #     id-token: write
+  #   runs-on: ubuntu-latest
+  #   environment:
+  #     name: github-pages
+  #     url: ${{ steps.deployment.outputs.page_url }}
+  #   steps:
+  #     - name: Deploy to GitHub Pages
+  #       id: deployment
+  #       uses: actions/deploy-pages@v4
+
+    - name: Publish test report
+      uses: peaceiris/actions-gh-pages@v3
       if: always()
       with:
-        gh_pages: gh-pages
-        allure_history: allure-history
-        allure_results: allure-results
-
-    - name: Upload artifact
-      uses: actions/upload-pages-artifact@v3
-      with:
-        path: allure-history
-
-  deploy:
-    needs: [merge-reports]
-    permissions:
-      pages: write
-      id-token: write
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
-
-    # - name: Publish test report
-    #   uses: peaceiris/actions-gh-pages@v3
-    #   if: always()
-    #   with:
-    #     github_token: ${{ secrets.GITHUB_TOKEN }}
-    #     publish_branch: gh-pages
-    #     publish_dir: allure-history
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        # publish_branch: gh-pages
+        publish_dir: allure-report
