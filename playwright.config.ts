@@ -2,6 +2,7 @@ import { defineConfig, devices } from '@playwright/test';
 import dotenv from 'dotenv';
 import path from 'path';
 dotenv.config({ path: path.resolve(__dirname, '.env') });
+import * as os from "node:os";
 
 /**
  * Read environment variables from file.
@@ -26,9 +27,33 @@ export default defineConfig({
     [
       "allure-playwright",
       {
-        resultsDir: process.env.ALLURE_RESULTS_DIR
-          ? `allure-results-${process.env.ALLURE_RESULTS_DIR}`
-          : 'allure-results',
+        // resultsDir: process.env.ALLURE_RESULTS_DIR
+        //   ? `allure-results-${process.env.ALLURE_RESULTS_DIR}`
+        //   : 'allure-results',
+        // resultsDir: process.env.ALLURE_RESULTS_DIR
+        //   ? `allure-results-${process.env.ALLURE_RESULTS_DIR}`
+        //   : 'allure-results',
+        resultsDir: 'allure-results',
+        environmentInfo: {
+          os_platform: process.env.RUNNER_OS || os.platform(),
+          os_release: process.env.ImageOS || os.release(),
+          os_version: os.version(),
+          node_version: process.version,
+          env_url: "https://env.example.com/"
+        },
+        links: {
+          issue: {
+            nameTemplate: "Issue #%s",
+            urlTemplate: "https://issues.example.com/%s",
+          },
+          jira: {
+            urlTemplate: (v) => `https://jira.example.com/browse/${v}`,
+          },
+          xray: {
+            nameTemplate: "Xray #%s",
+            urlTemplate: "https://xray.example.com/%s",
+          },
+        },
       },
     ],
   ],

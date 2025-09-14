@@ -1,0 +1,147 @@
+name: test single job
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+    inputs:
+      files:
+        description: 'Put path to folders or names of files separated by space'
+        type: string
+      e2e:
+        type: boolean
+        default: false
+        description: Select e2e folder
+      tests_examples:
+        type: boolean
+        default: false
+        description: Select tests-examples folder
+
+jobs:
+  playwright-tests:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    # strategy:
+    #   fail-fast: false
+    #   matrix:
+    #     shardIndex: [1, 2, 3, 4, 5]
+    #     shardTotal: [5]
+
+    env:
+      TEST_APP_PATH: test-app
+      NODE_VERSION: lts/*
+      ALLURE_RESULTS_DIR: allure-results
+
+    steps:
+    - name: Checkout repository with playwright tests
+      uses: actions/checkout@v4
+    
+    - uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+    
+    - name: Checkout external repository with test-app project
+      uses: actions/checkout@v4
+      with:
+        repository: "gomczak/test-app"
+        path: ${{ env.TEST_APP_PATH }}
+
+    - name: Create .env file for test app
+      working-directory: ${{ env.TEST_APP_PATH }}
+      run: |
+        touch .env
+        echo "${{secrets.ENV_SECRETS}}" >> .env
+
+    - name: Run docker compose
+      working-directory: ${{ env.TEST_APP_PATH }}
+      run: |
+        docker compose up --build -d
+
+    - name: Install dependencies
+      run: npm install -g pnpm && pnpm install --frozen-lockfile
+
+    - name: Install Playwright Browsers
+      run: pnpm exec playwright install --with-deps
+
+    - name: Run Playwright tests
+      run: |
+        selected_options=()
+        if [[ "${{ github.event.inputs.e2e }}" == "true" ]]; then
+          selected_options+=("/e2e")
+        fi
+        if [[ "${{ github.event.inputs.tests_examples }}" == "true" ]]; then
+          selected_options+=("/test-examples")
+        fi
+        echo "Selected options: ${selected_options[@]} ${{ github.event.inputs.files }}"
+        pnpm exec playwright test \
+        ${selected_options[@]} \
+        ${{ github.event.inputs.files }} \
+        --reporter allure-playwright
+
+    - name: Load test report history
+      uses: actions/checkout@v4
+      if: always()
+      continue-on-error: true
+      with:
+        ref: gh-pages
+        path: gh-pages
+
+    - name: Build test report
+      uses: simple-elf/allure-report-action@v1.7
+      if: always()
+      with:
+        gh_pages: gh-pages
+        allure_history: allure-history
+        allure_results: allure-results
+
+    - name: Load existing index.html
+      if: always()
+      run: |
+        # git clone --branch gh-pages https://github.com/${{ github.repository }}.git gh-pages || true
+        touch gh-pages/index.html
+        cat gh-pages/index.html
+  
+    - name: Append new entry to index.html
+      if: always()
+      run: |
+        # Extract existing list items while removing redirect meta tags
+        EXISTING_ENTRIES=$(sed -n '/<ul>/,/<\/ul>/p' gh-pages/index.html | sed '/meta/d' | sed '/<ul>/d;/<\/ul>/d' || true)
+        
+        # Build new index.html
+        echo "<!DOCTYPE html>" > gh-pages/index.html
+        echo "<html lang='en'>" >> gh-pages/index.html
+        echo "<head>" >> gh-pages/index.html
+        # echo "  <meta charset='UTF-8'>" >> gh-pages/index.html
+        echo "  <title>Test Results History</title>" >> gh-pages/index.html
+        echo "</head>" >> gh-pages/index.html
+        echo "<body>" >> gh-pages/index.html
+        echo "  <h1>Test Results History</h1>" >> gh-pages/index.html
+        echo "  <ul>" >> gh-pages/index.html
+        
+        # Add new entry first
+        echo "    <li>$(TZ=Europe/Warsaw  date '+%Y-%m-%d %H:%M:%S') - <a href='./${{github.run_number}}'>Latest Report</a></li>" >> gh-pages/index.html
+        
+        # Append existing entries if any
+        if [ -n "$EXISTING_ENTRIES" ]; then
+        echo "$EXISTING_ENTRIES" >> gh-pages/index.html
+        fi
+        
+        echo "  </ul>" >> gh-pages/index.html
+        echo "</body>" >> gh-pages/index.html
+        echo "</html>" >> gh-pages/index.html
+
+        sudo chown $USER gh-pages/index.html
+        sudo chown $USER allure-history/
+        mv gh-pages/index.html allure-history/
+
+    - name: Publish test report
+      uses: peaceiris/actions-gh-pages@v3
+      if: always()
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_branch: gh-pages
+        publish_dir: allure-history
+
+
+
